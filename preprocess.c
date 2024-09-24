@@ -20,7 +20,7 @@ char *custom_strchr(const char *str, char c) {
 // Custom implementation of strstr (find first occurrence of substring)
 char *custom_strstr(const char *haystack, const char *needle) {
     if (!*needle) return (char *)haystack;
-    
+
     const char *p1, *p2;
     for (p1 = haystack; *p1; p1++) {
         for (p2 = needle; *p2 && *(p1 + (p2 - needle)) == *p2; p2++);
@@ -68,6 +68,11 @@ int custom_strncmp(const char *s1, const char *s2, uint n) {
     return *(unsigned char *)s1 - *(unsigned char *)s2;
 }
 
+// Check if the character is non-alphanumeric
+int is_non_alphanumeric(char c) {
+    return (c == ' ' || c == '\n' || c == '\0' || c == '.' || c == ',' || c == '!' || c == '?');
+}
+
 // Function to replace variables in the text with their definitions
 void replace_text(char *buffer, const char *var, const char *val) {
     char temp[BUF_SIZE];
@@ -76,14 +81,24 @@ void replace_text(char *buffer, const char *var, const char *val) {
     // Clear temp buffer
     custom_memset(temp, 0, sizeof(temp));
 
+    int var_len = custom_strlen(var);
+    int val_len = custom_strlen(val);
+
     // Loop through the buffer and replace occurrences of the variable
     while ((pos = custom_strstr(start, var)) != 0) {
-        // Copy part before the variable
-        custom_strncat(temp, start, pos - start);
-        // Append the replacement value
-        custom_strncat(temp, val, custom_strlen(val));
-        // Move past the variable
-        start = pos + custom_strlen(var);
+        // Ensure the match is a standalone variable by checking the surrounding characters
+        if ((pos == buffer || is_non_alphanumeric(*(pos - 1))) && is_non_alphanumeric(*(pos + var_len))) {
+            // Copy part before the variable
+            custom_strncat(temp, start, pos - start);
+            // Append the replacement value
+            custom_strncat(temp, val, val_len);
+            // Move past the variable
+            start = pos + var_len;
+        } else {
+            // If not a standalone match, just copy up to the current position
+            custom_strncat(temp, start, pos - start + var_len);
+            start = pos + var_len;
+        }
     }
 
     // Copy any remaining part of the buffer
