@@ -3,6 +3,6 @@
 
 int
 main(void) {
-    write(1, "Hello, World!\n", 14);
+    printf(1, "Hello, World!\n", 14);
     exit();
 }
