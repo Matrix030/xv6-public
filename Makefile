@@ -181,11 +181,22 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
-	_hello\
-	_preprocess\
+	_ps\
+	_nice\
+	_combined_tests\
+	_prime1\
+	_prime2\
+	_prime3\
+	_test_lock\
+	_test_inversion\
+	_test_inheritance\
+	
 
-fs.img: mkfs README data.txt $(UPROGS)
-	./mkfs fs.img README data.txt $(UPROGS)
+
+
+
+fs.img: mkfs README $(UPROGS)
+	./mkfs fs.img README $(UPROGS)
 
 -include *.d
 

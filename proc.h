@@ -1,3 +1,18 @@
+#include "spinlock.h"  // Include this to define `struct spinlock`
+
+#define MAX_LOCKS 7
+
+struct lock_t {
+    int id;
+    struct proc *owner;
+    int original_priority;
+    int locked;
+    struct spinlock lk_lock;  // Now defined properly
+};
+
+extern struct lock_t locks[MAX_LOCKS];
+int set_priority(int priority);
+
 // Per-CPU state
 struct cpu {
   uchar apicid;                // Local APIC ID
@@ -49,6 +64,10 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  int cps;
+  int original_priority;       // Original priority
+  int priority;            // Effective priority for scheduling
+  
 };
 
 // Process memory is laid out contiguously, low addresses first:
